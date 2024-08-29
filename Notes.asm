@@ -1,10 +1,3 @@
-
-
-; Filename: Demo.asm
-; Displaying single characters, numbers, and symbols
-; Jared Sheohn L. Acebes
-; Date: August 30, 2024
-
 .model small
 .stack 100h
 
@@ -141,8 +134,6 @@ loop_flag: ; name for the loop start flag
      
     ; EXTENDED REGISTER USAGE 32-Bit extensions
      ;  registers but with e before them (eax, ebx, ecx...)
-     
-    
     
     ; ==================================REGISTERS END=====================================
     
