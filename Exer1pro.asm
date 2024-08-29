@@ -18,15 +18,13 @@ LowerAZ_loop:
     ; Check if reached Z
     cmp bl, 'z' + 1  ; Compare BL with Z + 1
     jb LowerAZ_loop    ; If BL < Z + 1, continue
-
-    
-    ; Set to A
-    mov bl, 'A'
-
     
     mov ah, 02h
     mov dl, 0ah     ; newline
     int 21h 
+    
+    ; Set to A
+    mov bl, 'A'
     
 UpperAZ_loop:
     ; Print the char in BL
