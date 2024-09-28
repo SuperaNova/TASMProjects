@@ -48,7 +48,7 @@ DivOutX db "Dividend is: $"
 DivOutY db "Divisor is: $"
 
 OutEnd  db "Exit Program$"
-Invalid db "INVALID CHOICE$"
+Invalid db "INVALID CHOICE!$"
 Thank   db "Thank you.$"
 
 .code
@@ -118,6 +118,7 @@ main PROC
     mov choice, al
 
     call spacer
+    call spacer
 
     cmp choice, 'a'
     je addin
@@ -128,7 +129,7 @@ main PROC
     cmp choice, 'd'
     je divis
     cmp choice, 'e'
-    je exitin
+    je ender
     jmp inval
 
 addin: ; finisheda
@@ -178,17 +179,22 @@ divis:
 inval:
     mov ah, 09h
     mov bl, 0ceh
-    mov cx, 14 ; number of characters to apply color
+    mov cx, 15 ; number of characters to apply color
     int 10h
-    mov ah, 09h
-    mov bl, 0ceh
-    mov cx, 14 ; number of characters to apply color
-    int 10h
-	int 21h
     mov ah, 09h
     lea dx, Invalid
     int 21h
+    jmp exitin
+ender:
+    mov ah, 09h
+    mov bl, 62h
+    mov cx, 12 ; number of characters to apply color
+    int 10h
+    mov ah, 09h
+    mov dx, offset OutEnd
+    int 21h
 exitin:
+    call spacer
     call spacer
     mov ah, 09h
     mov dx, offset Thank
