@@ -1,351 +1,119 @@
 ; Filename: EXER25.ASM
 ; Programmer Name: JARED SHEOHN L. ACEBES
-; Date: 9/28/24
-; Description: CS243 Lab Hands-on Exam No. 2
+; Date : September 28, 2024
+; Description: This assembly language program will get 3 string inputs and
+; display back the 3 strings on separate lines.
 
 .model small
 .stack 100h
 .data
-nextline db 13, 10, "$"
-
-menu    db "THE CALCULATOR", 13, 10
-        db "Created by: Jared Sheohn L. Acebes", 13, 10
-        db "Date: September 28, 2024", 13, 10, 10
-        db "Main Menu", 13, 10, "$"
-PickA   db "a - Addition$"
-PickS   db "s - Subtraction$"
-PickM   db "m - Multiplication$"
-PickD   db "d - Division$"
-PickE   db "e - exit$"
-Input   db "Enter your choice: $"
-
-choice  db ?
-EnterX  db ?
-EnterY  db ?
-
-titadd  db "Addition$" ; 8
-AddX    db "Enter first addend: $"
-AddY    db "Enter second addend: $"
-AddOutX db "First addend is: $"
-AddOutY db "Second addend is: $"
-
-titsub  db "Subtraction$" ; 11
-SubX    db "Enter minuend: $"
-SubY    db "Enter subtrahend: $"
-SubOutX db "Minuend is: $"
-SubOutY db "Subtrahend is: $"
-
-titMul  db "Multiplication$" ; 14
-MulX    db "Enter multiplicand: $"
-MulY    db "Enter multiplier: $"
-MulOutX db "Multiplicand is: $"
-MulOutY db "Multiplier is: $"
-
-titDiv  db "Division$" ; 8
-DivX    db "Enter dividend: $"
-DivY    db "Enter divisor: $"
-DivOutX db "Dividend is: $"
-DivOutY db "Divisor is: $"
-
-OutEnd  db "Exit Program$"
-Invalid db "INVALID CHOICE!$"
-Thank   db "Thank you.$"
-
+    inputString1 db 50 DUP('$') ; Reserve 50 bytes for input string
+    inputString2 db 50 DUP('$')
+    inputString3 db 50 DUP('$')
+    promptString1 db 'Enter first string: $'
+    promptString2 db 'Enter second string: $'
+    promptString3 db 'Enter third string: $'
+    outputString1 db 'You entered first string: $'
+    outputString2 db 'You entered second string: $'
+    outputString3 db 'You entered third string: $'
 .code
-;Main func
-main PROC
-    mov ax, @data ; db setup
-	mov ds, ax
+MAIN PROC
+    ; Initialize data segment
+    MOV AX, @DATA
+    MOV DS, AX
 
-    mov ax, 03h
-    int 10h
+    ; Prompt the user for input first string
+    LEA DX, promptString1
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
 
-    mov ah, 09h
-	mov dx, offset menu
-	int 21h
+    ; Read input first string
+    LEA DX, inputString1
+    MOV AH, 0Ah ; DOS function to read a string
+    INT 21h
 
-    mov ah, 09h
-    mov bl, 12h
-    mov cx, 12 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset PickA
-	int 21h
-
-    call spacer
-    mov ah, 09h
-    mov bl, 34h
-    mov cx, 15 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset PickS
-	int 21h
-
-    call spacer
-    mov ah, 09h
-    mov bl, 56h
-    mov cx, 18 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset PickM
-	int 21h
-
-    call spacer
-    mov ah, 09h
-    mov bl, 78h
-    mov cx, 12 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset PickD
-	int 21h
-
-    call spacer
-    mov ah, 09h
-    mov bl, 62h
-    mov cx, 8 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset PickE
-	int 21h
-
-    call spacer
-    mov ah, 09h
-    mov dx, offset Input
+    ; this is for displaying new line
+    mov ah,02h
+    mov cl,0Ah ; 0Ah is new line
+    mov dl,cl
     int 21h
 
-    mov ah, 01h
-    int 21h
-    mov choice, al
+    ; Prompt the user for input second string
+    LEA DX, promptString2
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
 
-    call spacer
-    call spacer
+    ; Read input second string
+    LEA DX, inputString2
+    MOV AH, 0Ah ; DOS function to read a string
+    INT 21h
 
-    cmp choice, 'a'
-    je addin
-    cmp choice, 's'
-    je minus
-    cmp choice, 'm'
-    je multi
-    cmp choice, 'd'
-    je divis
-    cmp choice, 'e'
-    je ender
-    jmp inval
-
-addin: ; finisheda
-    mov ah, 09h
-    mov bl, 12h
-    mov cx, 8 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset titadd
-	int 21h
-    call spacer
-    call addinproc
-    jmp exitin
-minus:
-    mov ah, 09h
-    mov bl, 34h
-    mov cx, 11 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset titsub
-	int 21h
-    call spacer
-    call subtract
-    jmp exitin
-multi:
-    mov ah, 09h
-    mov bl, 56h
-    mov cx, 14 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset titMul
-	int 21h
-    call spacer
-    call multiplic
-    jmp exitin
-divis:
-    mov ah, 09h
-    mov bl, 78h
-    mov cx, 8 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-	mov dx, offset titDiv
-	int 21h
-    call spacer
-    call divin
-    jmp exitin
-inval:
-    mov ah, 09h
-    mov bl, 0ceh
-    mov cx, 15 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-    lea dx, Invalid
-    int 21h
-    jmp exitin
-ender:
-    mov ah, 09h
-    mov bl, 62h
-    mov cx, 12 ; number of characters to apply color
-    int 10h
-    mov ah, 09h
-    mov dx, offset OutEnd
-    int 21h
-exitin:
-    call spacer
-    call spacer
-    mov ah, 09h
-    mov dx, offset Thank
-    int 21h
-    mov ax, 4c00h ; return 0
-	int 21h
-main ENDP
-;description
-spacer PROC
-    mov ah, 09h
-	mov dx, offset nextline
-	int 21h
-
-    ret
-spacer ENDP
-
-;description
-addinproc PROC
-    mov ah, 09h
-    mov dx, offset AddX
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset AddY
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterY, al
-
-    call spacer
-    mov ah, 09h
-    mov dx, offset AddOutX
-    int 21h
-    mov ah, 02h
-    mov dl, EnterX
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset AddOutY
-    int 21h
-    mov ah, 02h
-    mov dl, EnterY
+    ; this is for displaying new line
+    mov ah,02h
+    mov cl,0Ah ; 0Ah is new line
+    mov dl,cl
     int 21h
 
-    ret
-addinproc ENDP
+    ; Prompt the user for input third string
+    LEA DX, promptString3
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
 
-;description
-subtract PROC
-    mov ah, 09h
-    mov dx, offset SubX
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset SubY
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterY, al
+    ; Read input third string
+    LEA DX, inputString3
+    MOV AH, 0Ah ; DOS function to read a string
+    INT 21h
 
-    call spacer
-    mov ah, 09h
-    mov dx, offset SubOutX
-    int 21h
-    mov ah, 02h
-    mov dl, EnterX
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset SubOutY
-    int 21h
-    mov ah, 02h
-    mov dl, EnterY
+    ; this is for displaying new line
+    mov ah,02h
+    mov cl,0Ah ; 0Ah is new line
+    mov dl,cl
     int 21h
 
-    ret
-subtract ENDP
-;description
-multiplic PROC
-    mov ah, 09h
-    mov dx, offset MulX
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset MulY
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterY, al
+    ; Display the output message for first string
+    LEA DX, outputString1
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
 
-    call spacer
-    mov ah, 09h
-    mov dx, offset MulOutX
-    int 21h
-    mov ah, 02h
-    mov dl, EnterX
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset MulOutY
-    int 21h
-    mov ah, 02h
-    mov dl, EnterY
+    ; Display the entered first string
+    LEA DX, inputString1 + 2 ; Skip the first two bytes (length and max length)
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
+
+    ; this is for displaying new line
+    mov ah,02h
+    mov cl,0Ah ; 0Ah is new line
+    mov dl,cl
     int 21h
 
-    ret
-multiplic ENDP
-;description
-divin PROC
-    mov ah, 09h
-    mov dx, offset DivX
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset DivY
-    int 21h
-    mov ah, 01h
-    int 21h
-    mov EnterY, al
+    ; Display the output message for second string
+    LEA DX, outputString2
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
 
-    call spacer
-    mov ah, 09h
-    mov dx, offset DivOutX
+    ; Display the entered second string
+    LEA DX, inputString2 + 2 ; Skip the first two bytes (length and max length)
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
+
+    ; this is for displaying new line
+    mov ah,02h
+    mov cl,0Ah ; 0Ah is new line
+    mov dl,cl
     int 21h
-    mov ah, 02h
-    mov dl, EnterX
-    int 21h
-    mov EnterX, al
-    call spacer
-    mov ah, 09h
-    mov dx, offset DivOutY
-    int 21h
-    mov ah, 02h
-    mov dl, EnterY
-    int 21h
-    
-    ret
-divin ENDP
-end main
+
+    ; Display the output message for third string
+    LEA DX, outputString3
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
+
+    ; Display the entered third string
+    LEA DX, inputString3 + 2 ; Skip the first two bytes (length and max length)
+    MOV AH, 09h ; DOS function to display a string
+    INT 21h
+
+    ; Exit program
+    MOV AX, 4C00h ; DOS function to terminate program
+    INT 21h
+MAIN ENDP
+END MAIN
