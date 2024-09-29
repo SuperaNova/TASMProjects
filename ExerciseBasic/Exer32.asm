@@ -11,7 +11,7 @@
 .data 
 inputnum1 db ? 
 inputnum2 db ? 
-head DB 13,10,'THE CALCULATOR',13,10,'Created by: HARLEY S. REYES',13,10,'DATE: 9/28/2024',13,10,'$' 
+head DB 13,10,'THE CALCULATOR',13,10,'Created by: JARED SHEOHN L. ACEBES',13,10,'DATE: 9/29/2024',13,10,'$' 
 head1 DB 13,10,'Main Menu',13,10,'$' 
 
 choice1 DB 'a - Addition',13,10,'$' 
