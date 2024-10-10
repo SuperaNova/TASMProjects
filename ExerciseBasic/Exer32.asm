@@ -7,7 +7,7 @@
 
 .model small 
 .stack 200h 
-
+;skibidi
 .data 
 inputnum1 db ? 
 inputnum2 db ? 
